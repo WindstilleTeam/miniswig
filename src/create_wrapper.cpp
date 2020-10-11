@@ -31,7 +31,7 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << "\n"
         << "#include <squirrel.h>\n"
         << "\n"
-        << "namespace scripting {\n"
+        << "namespace Scripting {\n"
         << "\n";
 
     hppout << "void register_" << modulename << "_wrapper(HSQUIRRELVM v);\n"
@@ -66,12 +66,13 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << "#include <assert.h>\n"
         << "#include <limits>\n"
         << "#include <sstream>\n"
+        << "#include <squirrel.h>\n"
         << "\n"
-        << "#include \"squirrel/squirrel_error.hpp\"\n"
+        << "#include \"scripting/squirrel_error.hpp\"\n"
         << "#include \"scripting/wrapper.interface.hpp\"\n"
         << "\n"
-        << "namespace scripting {\n"
-        << "namespace wrapper {\n"
+        << "namespace Scripting {\n"
+        << "namespace Wrapper {\n"
         << "\n";
 
     for(auto& type : ns->types) {
@@ -83,7 +84,7 @@ WrapperCreator::create_wrapper(Namespace* ns)
         create_function_wrapper(0, func);
     }
 
-    out << "} // namespace wrapper\n";
+    out << "} // namespace Wrapper\n";
 
     for(auto& type : ns->types) {
         Class* _class = dynamic_cast<Class*> (type);
@@ -93,7 +94,7 @@ WrapperCreator::create_wrapper(Namespace* ns)
 
     out << "void register_" << modulename << "_wrapper(HSQUIRRELVM v)\n"
         << "{\n"
-        << ind << "using namespace wrapper;\n"
+        << ind << "using namespace Wrapper;\n"
         << "\n";
 
     create_register_constants_code(ns);
@@ -102,7 +103,7 @@ WrapperCreator::create_wrapper(Namespace* ns)
 
     out << "}\n"
         << "\n"
-        << "} // namespace scripting\n"
+        << "} // namespace Scripting\n"
         << "\n"
         << "/* EOF */\n";
 }
@@ -299,7 +300,7 @@ WrapperCreator::create_function_wrapper(Class* _class, Function* function)
         out << ind << ind << "sq_throwerror(vm, _SC(\"'" << function->name << "' called without instance\"));\n";
         out << ind << ind << "return SQ_ERROR;\n";
         out << ind << "}\n";
-        out << ind << "auto _this = reinterpret_cast<" << ns_prefix << _class->name << "*> (data);\n";
+        out << ind << ns_prefix << _class->name << "* _this = reinterpret_cast<" << ns_prefix << _class->name << "*> (data);\n";
         out << "\n";
         out << ind << "if (_this == nullptr) {\n";
         out << ind << ind << "return SQ_ERROR;\n";
@@ -374,7 +375,7 @@ WrapperCreator::create_function_wrapper(Class* _class, Function* function)
             if(param.type.atomic_type == &BasicType::INT)
                 out << "static_cast<int> (arg" << i << ")";
             else if(param.type.atomic_type == &BasicType::FLOAT)
-                out << "static_cast<float> (arg" << i << ")";
+                out << "arg" << i << "";
             else if(param.type.atomic_type == &BasicType::BOOL)
                 out << "arg" << i << " == SQTrue";
             else
@@ -511,7 +512,7 @@ WrapperCreator::create_squirrel_instance(Class* _class)
         << ns_prefix << _class->name
         << "* object, bool setup_releasehook)\n"
         << "{\n"
-        << ind << "using namespace wrapper;\n"
+        << ind << "using namespace Wrapper;\n"
         << "\n"
         << ind << "sq_pushroottable(v);\n"
         << ind << "sq_pushstring(v, \"" << _class->name << "\", -1);\n"
@@ -546,7 +547,7 @@ WrapperCreator::create_class_release_hook(Class* _class)
 {
     out << "static SQInteger " << _class->name << "_release_hook(SQUserPointer ptr, SQInteger )\n"
         << "{\n"
-        << ind << "auto _this = reinterpret_cast<" << ns_prefix << _class->name
+        << ind << ns_prefix << _class->name << "* _this = reinterpret_cast<" << ns_prefix << _class->name
         << "*> (ptr);\n"
         << ind << "delete _this;\n"
         << ind << "return 0;\n"
