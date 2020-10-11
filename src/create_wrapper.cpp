@@ -1,5 +1,3 @@
-#include <config.h>
-
 #include "tree.hpp"
 #include "create_wrapper.hpp"
 #include "globals.hpp"

@@ -1,5 +1,3 @@
-#include <config.h>
-
 #include <stdexcept>
 #include <sstream>
 #include "xmlwriter.hpp"

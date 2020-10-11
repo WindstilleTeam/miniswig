@@ -1,4 +1,3 @@
-#include <config.h>
 #include "tree.hpp"
 
 BasicType BasicType::VOID("void");
