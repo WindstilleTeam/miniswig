@@ -37,10 +37,15 @@ flex_target(MyScanner src/lexer.ll
 
 add_flex_bison_dependency(MyScanner MyParser)
 
-add_executable(miniswig
-  ${MINISWIG_SOURCES}
+add_library(miniswig_generated STATIC
   ${BISON_MyParser_OUTPUTS}
   ${FLEX_MyScanner_OUTPUTS})
+target_include_directories(miniswig_generated PUBLIC src/)
+set_target_properties(miniswig_generated PROPERTIES CXX_CLANG_TIDY "")
+
+add_executable(miniswig
+  ${MINISWIG_SOURCES})
+target_link_libraries(miniswig miniswig_generated)
 target_include_directories(miniswig PUBLIC src/)
 
 # EOF #
