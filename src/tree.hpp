@@ -14,7 +14,7 @@ class AtomicType {
 public:
     AtomicType() :
       name(),
-      parent(0)
+      parent(nullptr)
     { }
     virtual ~AtomicType()
     { }
@@ -53,7 +53,7 @@ private:
 class Type {
 public:
     Type()
-        : atomic_type(0), _unsigned(false), _const(false), _static(false),
+        : atomic_type(nullptr), _unsigned(false), _const(false), _static(false),
         pointer(0), ref(0)
     { }
 
@@ -72,7 +72,7 @@ public:
 
     bool is_void() const
     {
-        if(atomic_type == 0)
+        if(atomic_type == nullptr)
             return true;
         if(atomic_type == &BasicType::VOID && pointer == 0)
             return true;
@@ -94,10 +94,10 @@ public:
     SQIntegerType()
     {
         this->name = "SQInteger";
-        assert(_instance == 0);
+        assert(_instance == nullptr);
         _instance = this;
     }
-    virtual ~SQIntegerType()
+    ~SQIntegerType() override
     {
         assert(_instance == this);
         _instance = nullptr;
@@ -116,10 +116,10 @@ public:
     HSQUIRRELVMType()
     {
         this->name = "HSQUIRRELVM";
-        assert(_instance == 0);
+        assert(_instance == nullptr);
         _instance = this;
     }
-    virtual ~HSQUIRRELVMType()
+    ~HSQUIRRELVMType() override
     {
         assert(_instance == this);
         _instance = nullptr;
@@ -138,13 +138,13 @@ public:
     StringType()
     {
         this->name = "string";
-        assert(_instance == 0);
+        assert(_instance == nullptr);
         _instance = this;
     }
-    virtual ~StringType()
+    ~StringType() override
     {
         assert(_instance == this);
-        _instance = 0;
+        _instance = nullptr;
     }
 
     static StringType* instance()
@@ -152,7 +152,7 @@ public:
         return _instance;
     }
 
-    virtual void write_c(std::ostream& out)
+    void write_c(std::ostream& out) override
     {
         out << "std::string";
     }
@@ -259,7 +259,7 @@ public:
         sub_classes(),
         docu_comment()
     { }
-    ~Class() {
+    ~Class() override {
         for(std::vector<ClassMember*>::iterator i = members.begin(); i != members.end(); ++i)
             delete *i;
     }
@@ -280,7 +280,7 @@ public:
         parent(),
         name()
     {
-        parent = 0;
+        parent = nullptr;
     }
     virtual ~Namespace() {
         for(std::vector<Function*>::iterator i = functions.begin();
@@ -313,7 +313,7 @@ public:
         if(godown && parent)
             return parent->_findType(name, true);
 
-        return 0;
+        return nullptr;
     }
 
     Namespace* _findNamespace(const std::string& name, bool godown = false) {
@@ -326,7 +326,7 @@ public:
         if(godown && parent)
             return parent->_findNamespace(name, true);
 
-        return 0;
+        return nullptr;
     }
 
     Namespace* findNamespace(const std::string& name, bool godown = false) {

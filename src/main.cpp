@@ -11,8 +11,8 @@
 extern int yyparse();
 extern int yylex();
 
-CompilationUnit* unit = 0;
-std::istream* input = 0;
+CompilationUnit* unit = nullptr;
+std::istream* input = nullptr;
 std::string inputfile;
 std::string selected_namespace;
 std::string modulename = "wrapper";

@@ -16,12 +16,12 @@ DocuCreator::create_docu(Namespace* ns)
             i != ns->types.end(); ++i) {
         AtomicType* type = *i;
         Class* _class = dynamic_cast<Class*> (type);
-        if(_class != 0)
+        if(_class != nullptr)
             create_class_docu(_class);
     }
     for(std::vector<Function*>::iterator i = ns->functions.begin();
             i != ns->functions.end(); ++i) {
-        create_function_docu(0, *i);
+        create_function_docu(nullptr, *i);
     }
 
     writer.closeTag("namespace");

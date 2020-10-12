@@ -36,8 +36,8 @@ WrapperCreator::create_wrapper(Namespace* ns)
            << "\n";
 
     for(auto& type : ns->types) {
-        auto _class = dynamic_cast<Class*> (type);
-        if(_class == 0)
+        auto* _class = dynamic_cast<Class*> (type);
+        if(_class == nullptr)
             continue;
 
         hppout << "class " << _class->name << ";\n";
@@ -74,19 +74,19 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << "\n";
 
     for(auto& type : ns->types) {
-        auto _class = dynamic_cast<Class*> (type);
-        if(_class != 0)
+        auto* _class = dynamic_cast<Class*> (type);
+        if(_class != nullptr)
             create_class_wrapper(_class);
     }
     for(auto& func : ns->functions) {
-        create_function_wrapper(0, func);
+        create_function_wrapper(nullptr, func);
     }
 
     out << "} // namespace Wrapper\n";
 
     for(auto& type : ns->types) {
         Class* _class = dynamic_cast<Class*> (type);
-        if(_class != 0)
+        if(_class != nullptr)
             create_squirrel_instance(_class);
     }
 
@@ -114,7 +114,7 @@ WrapperCreator::create_register_function_code(Function* function, Class* _class)
 
     out << ind << "sq_pushstring(v, \"" << function->name << "\", -1);\n";
     out << ind << "sq_newclosure(v, &"
-        << (_class != 0 ? _class->name + "_" : "") << function->name
+        << (_class != nullptr ? _class->name + "_" : "") << function->name
         << "_wrapper, 0);\n";
 
     if(function->custom) {
@@ -161,7 +161,7 @@ void
 WrapperCreator::create_register_functions_code(Namespace* ns)
 {
     for(auto& function : ns->functions) {
-        create_register_function_code(function, 0);
+        create_register_function_code(function, nullptr);
     }
 }
 
@@ -169,8 +169,8 @@ void
 WrapperCreator::create_register_classes_code(Namespace* ns)
 {
     for(auto& type : ns->types) {
-        auto _class = dynamic_cast<Class*> (type);
-        if(_class == 0)
+        auto* _class = dynamic_cast<Class*> (type);
+        if(_class == nullptr)
             continue;
         if(_class->super_classes.size() > 0)
             continue;
@@ -210,11 +210,11 @@ WrapperCreator::create_register_class_code(Class* _class)
     for(auto& member : _class->members) {
         if(member->visibility != ClassMember::PUBLIC)
             continue;
-        auto function = dynamic_cast<Function*> (member);
+        auto* function = dynamic_cast<Function*> (member);
         if(function) {
             create_register_function_code(function, _class);
         }
-        auto field = dynamic_cast<Field*> (member);
+        auto* field = dynamic_cast<Field*> (member);
         if(field) {
             create_register_constant_code(field);
         }
@@ -279,20 +279,20 @@ WrapperCreator::create_function_wrapper(Class* _class, Function* function)
         function->name = "constructor";
 
     out << "static SQInteger ";
-    if(_class != 0) {
+    if(_class != nullptr) {
         out << _class->name << "_";
     }
     out << function->name << "_wrapper(HSQUIRRELVM vm)\n"
         << "{\n";
     // avoid warning...
-    if(_class == 0 && function->parameters.empty()
+    if(_class == nullptr && function->parameters.empty()
             && function->return_type.is_void()
             && function->type != Function::CONSTRUCTOR) {
         out << ind << "(void) vm;\n";
     }
 
     // retrieve pointer to class instance
-    if(_class != 0 && function->type != Function::CONSTRUCTOR) {
+    if(_class != nullptr && function->type != Function::CONSTRUCTOR) {
         out << ind << "SQUserPointer data;\n";
         out << ind << "if(SQ_FAILED(sq_getinstanceup(vm, 1, &data, nullptr)) || !data) {\n";
         out << ind << ind << "sq_throwerror(vm, _SC(\"'" << function->name << "' called without instance\"));\n";
@@ -318,7 +318,7 @@ WrapperCreator::create_function_wrapper(Class* _class, Function* function)
                     "custom function '" + function->name + "' must have 1 HSQUIRRELVM parameter");
 
         out << ind << "return ";
-        if(_class != 0)
+        if(_class != nullptr)
             out << "_this->";
         else
             out << ns_prefix;
@@ -351,7 +351,7 @@ WrapperCreator::create_function_wrapper(Class* _class, Function* function)
         function->return_type.write_c_type(out);
         out << " return_value = ";
     }
-    if(_class != 0) {
+    if(_class != nullptr) {
         if(function->type == Function::CONSTRUCTOR) {
             out << "auto _this = new " << ns_prefix;
         } else {
@@ -361,6 +361,7 @@ WrapperCreator::create_function_wrapper(Class* _class, Function* function)
         out << ns_prefix;
     }
     if(function->type == Function::CONSTRUCTOR) {
+        assert(_class != nullptr);
         out << _class->name << "(";
     } else {
         out << function->name << "(";
@@ -384,6 +385,7 @@ WrapperCreator::create_function_wrapper(Class* _class, Function* function)
     }
     out << ");\n";
     if(function->type == Function::CONSTRUCTOR) {
+        assert(_class != nullptr);
         out << ind << "if(SQ_FAILED(sq_setinstanceup(vm, 1, _this))) {\n";
         out << ind << ind << "sq_throwerror(vm, _SC(\"Couldn't setup instance of '" << _class->name << "' class\"));\n";
         out << ind << ind << "return SQ_ERROR;\n";
