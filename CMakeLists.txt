@@ -48,4 +48,6 @@ add_executable(miniswig
 target_link_libraries(miniswig miniswig_generated)
 target_include_directories(miniswig PUBLIC src/)
 
+install(TARGETS miniswig)
+
 # EOF #
