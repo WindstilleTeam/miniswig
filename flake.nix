@@ -10,22 +10,27 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-      in rec {
-        packages = flake-utils.lib.flattenTree {
+      in {
+        packages = rec {
+          default = miniswig;
+
           miniswig = pkgs.stdenv.mkDerivation {
             pname = "miniswig";
             version = "0.0.0";
+
             src = nixpkgs.lib.cleanSource ./.;
+
             nativeBuildInputs = [
               pkgs.cmake
               pkgs.pkgconfig
             ];
+
             buildInputs = [
               pkgs.flex
               pkgs.bison
             ];
-           };
+          };
         };
-        defaultPackage = packages.miniswig;
-      });
+      }
+    );
 }
