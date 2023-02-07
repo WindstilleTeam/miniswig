@@ -406,8 +406,17 @@ WrapperCreator::create_function_wrapper(Class* _class, Function* function)
     } else if(function->return_type.is_void()) {
         out << ind << ind << "return 0;\n";
     } else {
-        push_to_stack(function->return_type, "return_value");
-        out << ind << ind << "return 1;\n";
+        // Determine if the function returns SQInteger.
+        std::ostringstream return_t;
+        function->return_type.atomic_type->write_c(return_t);
+
+        // If the function returns SQInteger, use that to determine if the Squirrel function will return data.
+        if (return_t.str() == "SQInteger") {
+            out << ind << ind << "return return_value;\n";
+        } else {
+            push_to_stack(function->return_type, "return_value");
+            out << ind << ind << "return 1;\n";
+        }
     }
 
     out << "\n";
