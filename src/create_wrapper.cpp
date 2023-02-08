@@ -11,10 +11,19 @@ void
 WrapperCreator::create_wrapper(Namespace* ns)
 {
     std::string fromfile = original_file != "" ? original_file : inputfile;
+    if (inputhpp_include.empty()) {
+      inputhpp_include = fromfile;
+    }
 
     if(selected_namespace != "") {
         ns_prefix = selected_namespace;
         ns_prefix += "::";
+    }
+
+    // Module name for header (uppercase).
+    std::string moduleheader = modulename;
+    for (auto& ch : moduleheader) {
+      ch = std::toupper(ch);
     }
 
     // hpp file
@@ -24,12 +33,12 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << " *  '" << fromfile << "'\n"
         << " * DO NOT CHANGE\n"
         << " */\n"
-        << "#ifndef HEADER_SUPERTUX_SCRIPTING_WRAPPER_HPP\n" //TODO avoid hardcoding
-        << "#define HEADER_SUPERTUX_SCRIPTING_WRAPPER_HPP\n"
+        << "#ifndef HEADER_" << moduleheader << "_SQUIRREL_WRAPPER_HPP\n"
+        << "#define HEADER_" << moduleheader << "_SQUIRREL_WRAPPER_HPP\n"
         << "\n"
         << "#include <squirrel.h>\n"
         << "\n"
-        << "namespace Scripting {\n"
+        << "namespace " << selected_namespace << " {\n"
         << "\n";
 
     hppout << "void register_" << modulename << "_wrapper(HSQUIRRELVM v);\n"
@@ -59,17 +68,18 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << " * DO NOT CHANGE\n"
         << " */\n"
         << "\n"
-        << "#include \"scripting/wrapper.hpp\"\n"
+        << "#include \"" << outputhpp_include << "\"\n"
         << "\n"
         << "#include <assert.h>\n"
         << "#include <limits>\n"
         << "#include <sstream>\n"
         << "#include <squirrel.h>\n"
         << "\n"
-        << "#include \"scripting/squirrel_error.hpp\"\n"
-        << "#include \"scripting/wrapper.interface.hpp\"\n"
+        << "#include \"" << inputhpp_include << "\"\n"
         << "\n"
-        << "namespace Scripting {\n"
+        << "#include \"squirrel/squirrel_error.hpp\"\n"
+        << "\n"
+        << "namespace " << selected_namespace << " {\n"
         << "namespace Wrapper {\n"
         << "\n";
 
@@ -122,7 +132,7 @@ WrapperCreator::create_register_function_code(Function* function, Class* _class)
     } else {
       out << ind << "sq_setparamscheck(v, SQ_MATCHTYPEMASKSTRING, \"";
 
-      out << "x|t";
+      out << ".";
 
       if(!function->parameters.empty())
         {

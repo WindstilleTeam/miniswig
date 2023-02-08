@@ -25,5 +25,7 @@ extern std::istream* input;
 extern std::string inputfile;
 extern std::string modulename;
 extern std::string selected_namespace;
+extern std::string inputhpp_include;
+extern std::string outputhpp_include;
 
 #endif
