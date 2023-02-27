@@ -66,7 +66,7 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << "#include <sstream>\n"
         << "#include <squirrel.h>\n"
         << "\n"
-        << "#include \"scripting/squirrel_error.hpp\"\n"
+        << "#include \"squirrel/squirrel_error.hpp\"\n"
         << "#include \"scripting/wrapper.interface.hpp\"\n"
         << "\n"
         << "namespace scripting {\n"
