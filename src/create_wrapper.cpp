@@ -80,7 +80,7 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << "#include \"squirrel/squirrel_error.hpp\"\n"
         << "\n"
         << "namespace " << selected_namespace << " {\n"
-        << "namespace Wrapper {\n"
+        << "namespace wrapper {\n"
         << "\n";
 
     for(auto& type : ns->types) {
@@ -111,7 +111,7 @@ WrapperCreator::create_wrapper(Namespace* ns)
 
     out << "}\n"
         << "\n"
-        << "} // namespace scripting\n"
+        << "} // namespace " << selected_namespace << "\n"
         << "\n"
         << "/* EOF */\n";
 }
