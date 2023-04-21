@@ -274,9 +274,23 @@ maybe_const_initialisation:
             }
             current_field->has_const_value = true;
         }
+    | '=' '-' T_INT
+        {
+            if(current_field->type->atomic_type == &BasicType::FLOAT) {
+                current_field->const_float_value = (float) -$3;
+            } else {
+                current_field->const_int_value = -$3;
+            }
+            current_field->has_const_value = true;
+        }
     | '=' T_FLOAT
         {
             current_field->const_float_value = $2;
+            current_field->has_const_value = true;
+        }
+    | '=' '-' T_FLOAT
+        {
+            current_field->const_float_value = -$3;
             current_field->has_const_value = true;
         }
     | '=' T_STRING
