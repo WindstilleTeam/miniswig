@@ -16,6 +16,8 @@ std::istream* input = nullptr;
 std::string inputfile;
 std::string selected_namespace;
 std::string modulename = "wrapper";
+std::string inputhpp_include;
+std::string outputhpp_include = "squirrel/wrapper.hpp";
 
 void usage()
 {
@@ -43,6 +45,13 @@ int main(int argc, char** argv)
                 return 1;
             }
             inputfile = argv[++i];
+        } else if(strcmp(argv[i], "--input-hpp") == 0) {
+            if(i+1 >= argc) {
+                std::cerr << "Need to specify input hpp include path.\n";
+                usage();
+                return 1;
+            }
+            inputhpp_include = argv[++i];
         } else if(strcmp(argv[i], "--output-cpp") == 0) {
             if(i+1 >= argc) {
                 std::cerr << "Need to specify output cpp name.\n";
@@ -57,6 +66,13 @@ int main(int argc, char** argv)
                 return 1;
             }
             outputhpp = argv[++i];
+        } else if(strcmp(argv[i], "--output-hpp-include") == 0) {
+            if(i+1 >= argc) {
+                std::cerr << "Need to specify output hpp include path.\n";
+                usage();
+                return 1;
+            }
+            outputhpp_include = argv[++i];
         } else if(strcmp(argv[i], "--select-namespace") == 0) {
             if(i+1 >= argc) {
                 std::cerr << "Need to specify a namespace.\n";
@@ -75,7 +91,6 @@ int main(int argc, char** argv)
             std::cerr << "Unknown option '" << argv[i] << "'.\n";
             usage();
             return 1;
-        } else {
         }
     }
     if( inputfile == "" || (
