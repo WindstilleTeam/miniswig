@@ -20,10 +20,14 @@ WrapperCreator::create_wrapper(Namespace* ns)
         ns_prefix += "::";
     }
 
-    // Module name for header (uppercase).
-    std::string moduleheader = modulename;
-    for (auto& ch : moduleheader) {
-      ch = std::toupper(ch);
+    // Generate include guard "HEADER" definition
+    std::string header = "HEADER_";
+    for (const char& ch : modulename) {
+      header += std::toupper(ch);
+    }
+    header += '_';
+    for (const char& ch : outputhpp_include) { // Generate uppercase path from output header file destination
+      header += (std::isalpha(ch) || std::isdigit(ch) ? std::toupper(ch) : '_');
     }
 
     // hpp file
@@ -33,8 +37,8 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << " *  '" << fromfile << "'\n"
         << " * DO NOT CHANGE\n"
         << " */\n"
-        << "#ifndef HEADER_" << moduleheader << "_SQUIRREL_WRAPPER_HPP\n"
-        << "#define HEADER_" << moduleheader << "_SQUIRREL_WRAPPER_HPP\n"
+        << "#ifndef " << header << "\n"
+        << "#define " << header << "\n"
         << "\n"
         << "#include <squirrel.h>\n"
         << "\n"
