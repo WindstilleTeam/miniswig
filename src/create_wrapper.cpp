@@ -1,3 +1,27 @@
+// miniswig - Language binding generator for Squirrel
+// Copyright (C) 2005-2006 Matthias Braun <matze@braunis.de>
+// Copyright (C) 2007 Ondřej Hošek <ondra.hosek@gmail.com>
+// Copyright (C) 2009-2023 Ingo Ruhnke <grumbel@gmail.com>
+// Copyright (C) 2009 Mathnerd314 <man.is.allan@gmail.com>
+// Copyright (C) 2016-2019 Tobias Markus <tobbi.bugs@googlemail.com>
+// Copyright (C) 2016 Sergii Pylypenko <x.pelya.x@gmail.com>
+// Copyright (C) 2016 Tobias Markus <tobbi@mozilla-uk.org>
+// Copyright (C) 2018 leper <leper@wildfiregames.com>
+// Copyright (C) 2023 Vankata453 <78196474+Vankata453@users.noreply.github.com>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #include "tree.hpp"
 #include "create_wrapper.hpp"
 #include "globals.hpp"
