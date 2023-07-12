@@ -37,7 +37,49 @@
     "root": {
       "inputs": {
         "nixpkgs": "nixpkgs",
+        "squirrel": "squirrel",
         "tinycmmc": "tinycmmc"
+      }
+    },
+    "squirrel": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "squirrel_src": "squirrel_src",
+        "tinycmmc": [
+          "tinycmmc"
+        ]
+      },
+      "locked": {
+        "lastModified": 1684866146,
+        "narHash": "sha256-Ewa98VUzbyUPUbeQezlUYsZPqKRzWu45B2XfmsuTf2w=",
+        "owner": "grumnix",
+        "repo": "squirrel",
+        "rev": "87bcbc8d6778b53fa05d50d4a0c45cc73ea3c2a2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "grumnix",
+        "repo": "squirrel",
+        "type": "github"
+      }
+    },
+    "squirrel_src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1651485918,
+        "narHash": "sha256-cYj/83JVUBuLWznSfBjDIwrUI3e7F+FysQqpPgk4Wv4=",
+        "owner": "albertodemichelis",
+        "repo": "squirrel",
+        "rev": "b31e5bdc213359f6612e77d36bae26fa85424c56",
+        "type": "github"
+      },
+      "original": {
+        "owner": "albertodemichelis",
+        "repo": "squirrel",
+        "rev": "b31e5bdc213359f6612e77d36bae26fa85424c56",
+        "type": "github"
       }
     },
     "systems": {

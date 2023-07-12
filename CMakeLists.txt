@@ -19,6 +19,13 @@
 cmake_minimum_required(VERSION 3.15)
 project(miniswig)
 
+option(BUILD_TESTS "Build test cases" OFF)
+
+if (BUILD_TESTS)
+  # add 'make test' target, use 'make test ARGS="-V"' or 'ctest -V' for verbose
+  enable_testing()
+endif(BUILD_TESTS)
+
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
@@ -49,5 +56,61 @@ target_link_libraries(miniswig miniswig_generated)
 target_include_directories(miniswig PUBLIC src/)
 
 install(TARGETS miniswig)
+
+if (BUILD_TESTS)
+  find_package(squirrel 3.2 REQUIRED)
+
+  add_library(LibSquirrel ALIAS squirrel::squirrel)
+  add_library(LibSqstdlib ALIAS squirrel::sqstdlib)
+
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests)
+  add_custom_command(VERBATIM
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tests/example.ii
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tests/example.hpp
+
+    COMMAND ${CMAKE_CXX_COMPILER}
+    ARGS
+    -x "c++" -E -CC
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/example.hpp
+    -o ${CMAKE_CURRENT_BINARY_DIR}/tests/example.ii
+    -I${CMAKE_CURRENT_SOURCE_DIR}/tests
+    -DSCRIPTING_API
+    )
+
+  add_custom_command(VERBATIM
+    OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/tests/example_wrap.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/tests/example_wrap.hpp
+
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tests/example.ii
+
+    COMMAND miniswig
+    ARGS
+    --input ${CMAKE_CURRENT_BINARY_DIR}/tests/example.ii
+    --output-cpp ${CMAKE_CURRENT_BINARY_DIR}/tests/example_wrap.cpp
+    --output-hpp ${CMAKE_CURRENT_BINARY_DIR}/tests/example_wrap.hpp
+    --module example
+    --select-namespace example
+    )
+
+  add_custom_target(example_wrap ALL
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tests/example_wrap.hpp)
+
+  add_executable(example
+    ${CMAKE_CURRENT_BINARY_DIR}/tests/example_wrap.cpp
+    tests/example.cpp)
+  add_dependencies(example example_wrap)
+  target_include_directories(example PUBLIC
+    include/
+    tests/
+    ${CMAKE_CURRENT_BINARY_DIR}/tests/)
+  target_link_libraries(example PRIVATE
+    squirrel::squirrel
+    squirrel::sqstdlib
+    )
+
+  add_test(NAME example_test
+    COMMAND example)
+endif()
 
 # EOF #
