@@ -30,7 +30,7 @@ std::string inputfile;
 std::string selected_namespace;
 std::string modulename = "wrapper";
 std::string inputhpp_include;
-std::string outputhpp_include = "squirrel/wrapper.hpp";
+std::string outputhpp_include;
 
 void usage()
 {
@@ -111,6 +111,10 @@ int main(int argc, char** argv)
         std::cerr << "Not all options specified.\n";
         usage();
         return 1;
+    }
+
+    if (outputhpp_include.empty()) {
+      outputhpp_include = outputhpp;
     }
 
     try {
