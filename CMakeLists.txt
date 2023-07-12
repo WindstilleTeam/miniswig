@@ -29,29 +29,30 @@ endif(BUILD_TESTS)
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
-file(GLOB MINISWIG_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  src/create_docu.cpp
-  src/create_wrapper.cpp
-  src/main.cpp
-  src/tree.cpp
-  src/xmlwriter.cpp)
-
 bison_target(MyParser src/parser.yy
-  ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp)
+  ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp
+  )
 
 flex_target(MyScanner src/lexer.ll
-  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
+  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
+  )
 
 add_flex_bison_dependency(MyScanner MyParser)
 
 add_library(miniswig_generated STATIC
   ${BISON_MyParser_OUTPUTS}
-  ${FLEX_MyScanner_OUTPUTS})
+  ${FLEX_MyScanner_OUTPUTS}
+  )
 target_include_directories(miniswig_generated PUBLIC src/)
 set_target_properties(miniswig_generated PROPERTIES CXX_CLANG_TIDY "")
 
 add_executable(miniswig
-  ${MINISWIG_SOURCES})
+  src/create_docu.cpp
+  src/create_wrapper.cpp
+  src/main.cpp
+  src/tree.cpp
+  src/xmlwriter.cpp
+  )
 target_link_libraries(miniswig miniswig_generated)
 target_include_directories(miniswig PUBLIC src/)
 
@@ -60,10 +61,9 @@ install(TARGETS miniswig)
 if (BUILD_TESTS)
   find_package(squirrel 3.2 REQUIRED)
 
-  add_library(LibSquirrel ALIAS squirrel::squirrel)
-  add_library(LibSqstdlib ALIAS squirrel::sqstdlib)
-
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests)
+
+  # run the C++ preprocessor
   add_custom_command(VERBATIM
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tests/example.ii
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tests/example.hpp
@@ -77,6 +77,7 @@ if (BUILD_TESTS)
     -DSCRIPTING_API
     )
 
+  # run miniswig to generate the wrapper code
   add_custom_command(VERBATIM
     OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/tests/example_wrap.cpp
@@ -93,24 +94,24 @@ if (BUILD_TESTS)
     --select-namespace example
     )
 
-  add_custom_target(example_wrap ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tests/example_wrap.hpp)
-
+  # build the test executable
   add_executable(example
     ${CMAKE_CURRENT_BINARY_DIR}/tests/example_wrap.cpp
-    tests/example.cpp)
-  add_dependencies(example example_wrap)
+    tests/example.cpp
+    )
   target_include_directories(example PUBLIC
     include/
     tests/
-    ${CMAKE_CURRENT_BINARY_DIR}/tests/)
+    ${CMAKE_CURRENT_BINARY_DIR}/tests/
+    )
   target_link_libraries(example PRIVATE
     squirrel::squirrel
     squirrel::sqstdlib
     )
 
   add_test(NAME example_test
-    COMMAND example)
+    COMMAND example
+    )
 endif()
 
 # EOF #
