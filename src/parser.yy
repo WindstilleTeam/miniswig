@@ -130,7 +130,7 @@ namespace_members: /* empty */
 ;
 
 namespace_declaration:
-    T_NAMESPACE T_ID '{' 
+    T_NAMESPACE T_ID '{'
         {
             Namespace* newNamespace = new Namespace();
             newNamespace->name = $2;
@@ -160,10 +160,10 @@ namespace_member:
     | namespace_declaration
     | field_declaration
         { current_namespace->fields.push_back($1); }
-;  
+;
 
 class_declaration:
-    T_CLASS T_ID 
+    T_CLASS T_ID
         {
             current_class = new Class();
             current_class->name = $2;
@@ -212,7 +212,7 @@ class_body: /* empty */
 class_body_element:
         visibility_change
         | constructor_declaration
-            { 
+            {
                 $1->visibility = current_visibility;
                 current_class->members.push_back($1);
             }
@@ -242,7 +242,7 @@ visibility_change:
         { current_visibility = ClassMember::PRIVATE; }
 ;
 
-constructor_declaration:    
+constructor_declaration:
     T_ID '('
         {
             current_function = new Function();
@@ -270,7 +270,7 @@ destructor_declaration:
 ;
 
 field_declaration:
-    type T_ID 
+    type T_ID
         {
             current_field = new Field();
             current_field->type = $1;
@@ -320,10 +320,10 @@ maybe_const_initialisation:
             current_field->const_string_value = $2;
             current_field->has_const_value = true;
         }
-;          
+;
 
 function_declaration:
-    type T_ID '(' 
+    type T_ID '('
         {
             current_function = new Function();
             current_function->type = Function::FUNCTION;
@@ -333,7 +333,7 @@ function_declaration:
             free($2);
             current_function->docu_comment = last_docucomment;
             last_docucomment = "";
-        }                           
+        }
     parameter_list ')' function_attributes abstract_declaration ';'
         {
             $$ = current_function;
@@ -392,7 +392,7 @@ type:
         {
             current_type = new Type();
         }
-    prefix_type_modifiers atomic_type postfix_type_modifiers 
+    prefix_type_modifiers atomic_type postfix_type_modifiers
         {
             $$ = current_type;
         }
@@ -481,4 +481,3 @@ void yyerror(const char* error)
 {
     throw ParseError(error);
 }
-
