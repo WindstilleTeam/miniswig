@@ -85,7 +85,7 @@ if (BUILD_TESTS)
 
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tests/example.ii
 
-    COMMAND miniswig
+    COMMAND $<TARGET_FILE:miniswig>
     ARGS
     --input ${CMAKE_CURRENT_BINARY_DIR}/tests/example.ii
     --output-cpp ${CMAKE_CURRENT_BINARY_DIR}/tests/example_wrap.cpp

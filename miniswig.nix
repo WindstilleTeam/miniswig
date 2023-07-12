@@ -14,7 +14,8 @@ stdenv.mkDerivation rec {
 
   src = ./.;
 
-  doCheck = true;
+  # FIXME: miniswig.exe wants .dlls but can't find them
+  doCheck = ! stdenv.targetPlatform.isWindows;
 
   cmakeFlags =
     lib.optional doCheck "-DBUILD_TESTS=ON";
