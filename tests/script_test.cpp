@@ -91,29 +91,33 @@ int main(int argc, char** argv)
       throw SquirrelError(vm, "Problem while executing script");
     }
 
-    std::cout << "-- vmstate: ";
-    switch (sq_getvmstate(vm))
+    while (sq_getvmstate(vm) == SQ_VMSTATE_SUSPENDED)
     {
-      case SQ_VMSTATE_IDLE:
-        std::cout << "idle";
-        break;
-      case SQ_VMSTATE_RUNNING:
-        std::cout << "running";
-        break;
-      case SQ_VMSTATE_SUSPENDED:
-        std::cout << "suspended";
-        break;
-      default:
-        std::cout << "unknown";
-    }
-    std::cout << "\n";
+      std::cout << "-- vmstate: ";
+      switch (sq_getvmstate(vm))
+      {
+        case SQ_VMSTATE_IDLE:
+          std::cout << "idle";
+          break;
+        case SQ_VMSTATE_RUNNING:
+          std::cout << "running";
+          break;
+        case SQ_VMSTATE_SUSPENDED:
+          std::cout << "suspended";
+          break;
+        default:
+          std::cout << "unknown";
+      }
+      std::cout << "\n";
 
-    if (SQ_FAILED(sq_wakeupvm(vm,
-                              SQFalse /* resumedret */,
-                              SQFalse /* retval */,
-                              SQTrue  /* raiseerror */,
-                              SQFalse /* throwerror */))) {
-      throw SquirrelError(vm, "Problem while resuming script");
+      if (SQ_FAILED(sq_wakeupvm(vm,
+                                SQFalse /* resumedret */,
+                                SQFalse /* retval */,
+                                SQTrue  /* raiseerror */,
+                                SQFalse /* throwerror */)))
+      {
+        throw SquirrelError(vm, "Problem while resuming script");
+      }
     }
 
     // compiled script, roottable
