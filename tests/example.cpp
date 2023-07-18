@@ -16,13 +16,7 @@
 
 #include "example.hpp"
 
-#include <cassert>
-#include <cstdio>
-#include <cstdarg>
-#include <stdexcept>
 #include <iostream>
-
-#include <squirrel/squirrel_error.hpp>
 
 #include "util.hpp"
 #include "example_wrap.hpp"
@@ -131,101 +125,5 @@ SQInteger do_custom(HSQUIRRELVM vm)
 }
 
 } // namespace example
-
-
-void my_printfunc(HSQUIRRELVM vm, SQChar const* fmt, ...)
-{
-  printf("from squirrel: ");
-  va_list args;
-  va_start(args, fmt);
-  vprintf(fmt, args);
-  va_end(args);
-}
-
-void my_errorfunc(HSQUIRRELVM vm, SQChar const* fmt, ...)
-{
-  fprintf(stderr, "from squirrel: ");
-
-  va_list args;
-  va_start(args, fmt);
-  vfprintf(stderr, fmt, args);
-  va_end(args);
-}
-
-int main()
-{
-  std::cout << "main()\n";
-
-  try {
-    // create Squirrel VM
-    HSQUIRRELVM vm = sq_open(1024);
-    if (vm == nullptr) {
-      throw std::runtime_error("Couldn't initialize squirrel vm");
-    }
-
-    sq_setprintfunc(vm, my_printfunc, my_errorfunc);
-
-    std::cout << "-- start\n";
-
-    std::cout << "-- register custom functions\n";
-    sq_pushroottable(vm);
-    example::register_example_wrapper(vm);
-    sq_pop(vm, 1);
-
-    // run tests
-    std::string script = load_file("../tests/example.nut");
-
-    std::cout << "-- compiling script\n";
-    if (SQ_FAILED(sq_compilebuffer(vm, script.c_str(), script.length(),
-                                   "", SQTrue))) {
-      throw SquirrelError(vm, "Couldn't compile script");
-    }
-
-    std::cout << "-- executing script\n";
-    sq_pushroottable(vm);
-
-    if (SQ_FAILED(sq_call(vm, 1, SQTrue, SQTrue))) {
-      throw SquirrelError(vm, "Problem while executing script");
-    }
-
-    std::cout << "-- vmstate: ";
-    switch (sq_getvmstate(vm))
-    {
-      case SQ_VMSTATE_IDLE:
-        std::cout << "idle";
-        break;
-      case SQ_VMSTATE_RUNNING:
-        std::cout << "running";
-        break;
-      case SQ_VMSTATE_SUSPENDED:
-        std::cout << "suspended";
-        break;
-      default:
-        std::cout << "unknown";
-    }
-    std::cout << "\n";
-
-    if (SQ_FAILED(sq_wakeupvm(vm,
-                              SQFalse /* resumedret */,
-                              SQFalse /* retval */,
-                              SQTrue  /* raiseerror */,
-                              SQFalse /* throwerror */))) {
-      throw SquirrelError(vm, "Problem while resuming script");
-    }
-
-    // compiled script, roottable
-    assert(sq_gettop(vm) == 2);
-
-    std::cout << "-- closing\n";
-    sq_close(vm);
-
-    std::cout << "-- end\n";
-
-    return EXIT_SUCCESS;
-  } catch (std::exception const& err) {
-    std::cerr << "error: " << err.what() << std::endl;
-    return EXIT_FAILURE;
-  }
-}
 
 /* EOF */

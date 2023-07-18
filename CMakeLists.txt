@@ -95,22 +95,23 @@ if (BUILD_TESTS)
     )
 
   # build the test executable
-  add_executable(example
+  add_executable(script_test
+    tests/script_test.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/tests/example_wrap.cpp
     tests/example.cpp
     )
-  target_include_directories(example PUBLIC
+  target_include_directories(script_test PUBLIC
     include/
     tests/
     ${CMAKE_CURRENT_BINARY_DIR}/tests/
     )
-  target_link_libraries(example PRIVATE
+  target_link_libraries(script_test PRIVATE
     squirrel::squirrel
     squirrel::sqstdlib
     )
 
   add_test(NAME example_test
-    COMMAND example
+    COMMAND script_test ${CMAKE_CURRENT_SOURCE_DIR}/tests/example.nut
     )
 endif()
 
