@@ -16,7 +16,9 @@
 
 #include "example.hpp"
 
-#include <assert.h>
+#include <cassert>
+#include <cstdio>
+#include <cstdarg>
 #include <stdexcept>
 #include <iostream>
 
@@ -130,6 +132,26 @@ SQInteger do_custom(HSQUIRRELVM vm)
 
 } // namespace example
 
+
+void my_printfunc(HSQUIRRELVM vm, SQChar const* fmt, ...)
+{
+  printf("from squirrel: ");
+  va_list args;
+  va_start(args, fmt);
+  vprintf(fmt, args);
+  va_end(args);
+}
+
+void my_errorfunc(HSQUIRRELVM vm, SQChar const* fmt, ...)
+{
+  fprintf(stderr, "from squirrel: ");
+
+  va_list args;
+  va_start(args, fmt);
+  vfprintf(stderr, fmt, args);
+  va_end(args);
+}
+
 int main()
 {
   std::cout << "main()\n";
@@ -140,6 +162,8 @@ int main()
     if (vm == nullptr) {
       throw std::runtime_error("Couldn't initialize squirrel vm");
     }
+
+    sq_setprintfunc(vm, my_printfunc, my_errorfunc);
 
     std::cout << "-- start\n";
 
