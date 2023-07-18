@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <cassert>
-#include <cstdio>
 #include <cstdarg>
-#include <stdexcept>
+#include <cstdio>
 #include <iostream>
+#include <stdexcept>
 
 #include <squirrel/squirrel_error.hpp>
 
@@ -46,6 +46,32 @@ void my_errorfunc(HSQUIRRELVM vm, SQChar const* fmt, ...)
   va_end(args);
 }
 
+void my_debug_hook(HSQUIRRELVM vm, SQInteger event_type, SQChar const* sourcename, SQInteger line, SQChar const* funcname)
+{
+  std::cout << "  sq ";
+  switch (event_type)
+  {
+    case 'l':
+      std::cout << "line: ";
+      break;
+
+    case 'c':
+      std::cout << "call: ";
+      break;
+
+    case 'r':
+      std::cout << "return: ";
+      break;
+
+    default:
+      assert(false && "never reached");
+  }
+
+  std::cout << ": " << (sourcename ? sourcename : "<null>")
+            << ":" << line
+            << ":" << (funcname ? funcname : "<null>") << "\n";
+}
+
 } // namespace
 
 int main(int argc, char** argv)
@@ -67,6 +93,8 @@ int main(int argc, char** argv)
     }
 
     sq_setprintfunc(vm, my_printfunc, my_errorfunc);
+    sq_setnativedebughook(vm, my_debug_hook);
+    sq_enabledebuginfo(vm, SQTrue);
 
     std::cout << "-- start\n";
 
@@ -80,7 +108,7 @@ int main(int argc, char** argv)
 
     std::cout << "-- compiling script\n";
     if (SQ_FAILED(sq_compilebuffer(vm, script.c_str(), script.length(),
-                                   "", SQTrue))) {
+                                   filename.c_str(), SQTrue))) {
       throw SquirrelError(vm, "Couldn't compile script");
     }
 
