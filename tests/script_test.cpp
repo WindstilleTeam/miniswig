@@ -17,7 +17,9 @@
 #include <cassert>
 #include <cstdarg>
 #include <cstdio>
+#include <cstring>
 #include <iostream>
+#include <optional>
 #include <stdexcept>
 
 #include <squirrel/squirrel_error.hpp>
@@ -72,16 +74,44 @@ void my_debug_hook(HSQUIRRELVM vm, SQInteger event_type, SQChar const* sourcenam
             << ":" << (funcname ? funcname : "<null>") << "\n";
 }
 
+struct Options
+{
+  bool debug = false;
+  std::string filename;
+};
+
+Options parse_args(int argc, char** argv)
+{
+  Options opts;
+
+  for (int i = 1; i < argc; ++i)
+  {
+    if (argv[i][0] == '-') {
+      if (std::strcmp("--debug", argv[i]) == 0) {
+        opts.debug = true;
+      } else {
+        throw std::runtime_error("unknown option: " + std::string(argv[i]));
+      }
+    } else {
+      if (!opts.filename.empty()) {
+        throw std::runtime_error("only one FILENAME argument allowed");
+      }
+      opts.filename = argv[i];
+    }
+  }
+
+  if (opts.filename.empty()) {
+    throw std::runtime_error("FILENAME argument missing");
+  }
+
+  return opts;
+}
+
 } // namespace
 
 int main(int argc, char** argv)
 {
-  if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " FILENAME" << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  std::string const filename = argv[1];
+  Options opts = parse_args(argc, argv);
 
   std::cout << "main()\n";
 
@@ -94,7 +124,7 @@ int main(int argc, char** argv)
 
     sq_setprintfunc(vm, my_printfunc, my_errorfunc);
     sq_setnativedebughook(vm, my_debug_hook);
-    sq_enabledebuginfo(vm, SQTrue);
+    sq_enabledebuginfo(vm, opts.debug);
 
     std::cout << "-- start\n";
 
@@ -104,11 +134,11 @@ int main(int argc, char** argv)
     sq_pop(vm, 1);
 
     // run tests
-    std::string script = load_file(filename);
+    std::string script = load_file(opts.filename);
 
     std::cout << "-- compiling script\n";
     if (SQ_FAILED(sq_compilebuffer(vm, script.c_str(), script.length(),
-                                   filename.c_str(), SQTrue))) {
+                                   opts.filename.c_str(), SQTrue))) {
       throw SquirrelError(vm, "Couldn't compile script");
     }
 
