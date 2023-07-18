@@ -22,6 +22,7 @@
 
 #include <squirrel/squirrel_error.hpp>
 
+#include "util.hpp"
 #include "example_wrap.hpp"
 
 namespace example {
@@ -148,16 +149,7 @@ int main()
     sq_pop(vm, 1);
 
     // run tests
-    std::string script =
-      "do_foobar();"
-      "do_add(5, 10);"
-      "example <- Example();"
-      "example.do_foobar();"
-      "example.do_bazbaz();"
-      "do_custom(5, \"test\", 10);"
-      "do_suspend();"
-      "do_foobar();"
-      ;
+    std::string script = load_file("../tests/example.nut");
 
     std::cout << "-- compiling script\n";
     if (SQ_FAILED(sq_compilebuffer(vm, script.c_str(), script.length(),
