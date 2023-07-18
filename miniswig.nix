@@ -20,6 +20,11 @@ stdenv.mkDerivation rec {
   cmakeFlags =
     lib.optional doCheck "-DBUILD_TESTS=ON";
 
+  makeFlags = [
+    "VERBOSE=1"
+    "ARGS=-V"
+  ];
+
   nativeBuildInputs = [
     cmake
     pkgconfig
