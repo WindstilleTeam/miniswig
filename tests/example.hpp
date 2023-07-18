@@ -17,6 +17,14 @@
 #ifndef EXAMPLE_HPP
 #define EXAMPLE_HPP
 
+
+#ifndef SCRIPTING_API
+#include <squirrel.h>
+
+#define __suspend
+#define __custom(x)
+#endif
+
 namespace example {
 
 class Example
@@ -30,7 +38,17 @@ public:
 };
 
 void do_foobar();
-void do_bazbaz();
+void do_add(int a, int b);
+
+void do_suspend() __suspend;
+
+/*
+  The argument to __custom() acts as type signature for the custom
+  function. For possible values, see:
+
+  http://www.squirrel-lang.org/squirreldoc/reference/api/object_creation_and_handling.html#c.sq_setparamscheck
+ */
+SQInteger do_custom(HSQUIRRELVM vm) __custom(".isi");
 
 } // namespace example
 
