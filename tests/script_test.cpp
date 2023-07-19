@@ -22,6 +22,14 @@
 #include <optional>
 #include <stdexcept>
 
+#include <squirrel.h>
+#include <sqstdaux.h>
+#include <sqstdblob.h>
+#include <sqstdio.h>
+#include <sqstdmath.h>
+#include <sqstdstring.h>
+#include <sqstdsystem.h>
+
 #include <squirrel/squirrel_error.hpp>
 
 #include "util.hpp"
@@ -139,8 +147,15 @@ int main(int argc, char** argv)
 
     std::cout << "-- start\n";
 
-    std::cout << "-- register custom functions\n";
     sq_pushroottable(vm);
+    std::cout << "-- register standard functions\n";
+    sqstd_register_bloblib(vm);
+    sqstd_register_iolib(vm);
+    sqstd_register_mathlib(vm);
+    sqstd_register_stringlib(vm);
+    sqstd_register_systemlib(vm);
+
+    std::cout << "-- register custom functions\n";
     example::register_example_wrapper(vm);
     sq_pop(vm, 1);
 
