@@ -204,6 +204,8 @@ int main(int argc, char** argv)
       }
     }
 
+    print_squirrel_stack(vm);
+
     // compiled script, roottable
     assert(sq_gettop(vm) == 2);
 
