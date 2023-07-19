@@ -74,6 +74,15 @@ void my_debug_hook(HSQUIRRELVM vm, SQInteger event_type, SQChar const* sourcenam
             << ":" << (funcname ? funcname : "<null>") << "\n";
 }
 
+void my_compiler_error(HSQUIRRELVM vm, SQChar const* desc, SQChar const* source, SQInteger line, SQInteger column)
+{
+  std::cerr
+    << "Compile error:\n"
+    << "  Description: " << (desc ? desc : "<null>") << "\n"
+    << "  Source: " << (source ? source : "<null>") << "\n"
+    << "  Line: " << line << " Column: " << column << std::endl;
+}
+
 struct Options
 {
   bool debug = false;
@@ -125,6 +134,8 @@ int main(int argc, char** argv)
     sq_setprintfunc(vm, my_printfunc, my_errorfunc);
     sq_setnativedebughook(vm, my_debug_hook);
     sq_enabledebuginfo(vm, opts.debug);
+
+    sq_setcompilererrorhandler(vm, my_compiler_error);
 
     std::cout << "-- start\n";
 
