@@ -21,7 +21,7 @@ project(miniswig)
 
 option(BUILD_TESTS "Build test cases" OFF)
 
-if (BUILD_TESTS)
+if(BUILD_TESTS)
   # add 'make test' target, use 'make test ARGS="-V"' or 'ctest -V' for verbose
   enable_testing()
 endif(BUILD_TESTS)
@@ -62,7 +62,7 @@ target_include_directories(miniswig PUBLIC src/)
 
 install(TARGETS miniswig)
 
-if (BUILD_TESTS)
+if(BUILD_TESTS)
   find_package(squirrel 3.2 REQUIRED)
 
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests)
@@ -115,7 +115,7 @@ if (BUILD_TESTS)
     )
 
   add_test(NAME example_test
-    COMMAND script_test ${CMAKE_CURRENT_SOURCE_DIR}/tests/example.nut
+    COMMAND $<TARGET_FILE:script_test> ${CMAKE_CURRENT_SOURCE_DIR}/tests/example.nut
     )
 endif()
 
