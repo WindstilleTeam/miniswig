@@ -46,6 +46,10 @@ add_library(miniswig_generated STATIC
 target_include_directories(miniswig_generated PUBLIC src/)
 set_target_properties(miniswig_generated PROPERTIES CXX_CLANG_TIDY "")
 
+# Old versions of flex will generate forbidden 'register' keyword, disable this warning
+# https://github.com/westes/flex/commit/8091dc907663673d9e0295c57fa446bdd38e9fab
+set_target_properties(miniswig_generated PROPERTIES COMPILE_FLAGS "-Wno-register")
+
 add_executable(miniswig
   src/create_docu.cpp
   src/create_wrapper.cpp
