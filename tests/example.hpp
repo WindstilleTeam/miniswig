@@ -17,8 +17,9 @@
 #ifndef EXAMPLE_HPP
 #define EXAMPLE_HPP
 
-
 #ifndef SCRIPTING_API
+#include <string>
+
 #include <squirrel.h>
 
 #define __suspend
@@ -39,6 +40,16 @@ public:
 
 void do_foobar();
 void do_add(int a, int b);
+
+bool do_return_bool();
+int do_return_int();
+float do_return_float();
+std::string do_return_string();
+
+bool do_return_bool_id(bool value);
+int do_return_int_id(int value);
+float do_return_float_id(float value);
+std::string do_return_string_id(std::string const& value);
 
 void do_suspend() __suspend;
 

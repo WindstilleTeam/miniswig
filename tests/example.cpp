@@ -55,6 +55,46 @@ void do_add(int a, int b)
   std::cout << "do_bazbaz(" << a << ", " << b << ") -> " << a + b << "\n";
 }
 
+bool do_return_bool()
+{
+  return true;
+}
+
+int do_return_int()
+{
+  return 45;
+}
+
+float do_return_float()
+{
+  return 0.125f;
+}
+
+std::string do_return_string()
+{
+  return "Hello World";
+}
+
+bool do_return_bool_id(bool value)
+{
+  return value;
+}
+
+int do_return_int_id(int value)
+{
+  return value;
+}
+
+float do_return_float_id(float value)
+{
+  return value;
+}
+
+std::string do_return_string_id(std::string const& value)
+{
+  return value;
+}
+
 void do_suspend()
 {
   std::cout << "do_suspend()\n";
