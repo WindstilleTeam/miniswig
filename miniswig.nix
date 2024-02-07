@@ -1,8 +1,7 @@
-{ self
-, stdenv
+{ stdenv
 , lib
 , cmake
-, pkgconfig
+, pkg-config
 , flex
 , bison
 , squirrel
@@ -27,7 +26,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     cmake
-    pkgconfig
+    pkg-config
     flex
     bison
   ];
