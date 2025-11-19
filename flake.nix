@@ -19,7 +19,7 @@
           default = miniswig;
 
           miniswig = pkgs.callPackage ./miniswig.nix {
-            squirrel = squirrel.packages.${pkgs.system}.default;
+            squirrel = squirrel.packages.${pkgs.stdenv.hostPlatform.system}.default;
           };
         };
       }
