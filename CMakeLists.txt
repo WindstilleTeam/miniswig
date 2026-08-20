@@ -125,9 +125,21 @@ if(BUILD_TESTS)
     squirrel::sqstdlib
     )
 
-  add_test(NAME example_test
-    COMMAND $<TARGET_FILE:script_test> ${CMAKE_CURRENT_SOURCE_DIR}/tests/example.nut
+  # Scripts that exercise pure Squirrel language features / the harness
+  set(SCRIPT_TESTS
+    helloworld
+    closure
+    environment
+    exception
+    test
+    example
+  )
+
+  foreach(script ${SCRIPT_TESTS})
+    add_test(NAME ${script}_test
+      COMMAND $<TARGET_FILE:script_test> ${CMAKE_CURRENT_SOURCE_DIR}/tests/${script}.nut
     )
+  endforeach()
 endif()
 
 # EOF #

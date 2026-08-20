@@ -1,10 +1,10 @@
-
-function doit() {
-    printf("Doit(%0.2f)\n", 5.5);
+// Exercise free-function closures and .call() with an explicit environment.
+function doit()
+{
+  ::print("doit() called\n");
 }
 
+// Invoke with an empty table as `this`
 doit.call({});
 
-return "End of execution";
-
-# EOF #
+/* EOF */
