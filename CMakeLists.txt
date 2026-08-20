@@ -17,7 +17,17 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 cmake_minimum_required(VERSION 3.15)
+
+# Source of truth: top-level VERSION file (e.g. "0.1.0-dev"), or
+# -DPROJECT_VERSION_FULL=... from the packaging (Nix flake appends
+# .<revCount>+g<rev>).
+if(NOT DEFINED PROJECT_VERSION_FULL)
+  file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" PROJECT_VERSION_FULL LIMIT_COUNT 1)
+endif()
+
 project(miniswig)
+
+message(STATUS "miniswig version: ${PROJECT_VERSION_FULL}")
 
 option(BUILD_TESTS "Build test cases" OFF)
 
@@ -59,6 +69,7 @@ add_executable(miniswig
   )
 target_link_libraries(miniswig miniswig_generated)
 target_include_directories(miniswig PUBLIC src/)
+target_compile_definitions(miniswig PRIVATE MINISWIG_VERSION="${PROJECT_VERSION_FULL}")
 
 install(TARGETS miniswig)
 
