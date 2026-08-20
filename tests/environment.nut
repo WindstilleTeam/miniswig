@@ -3,7 +3,14 @@ function custom_function()
     ::print("custom_function()\n");
 }
 
+// this shows up in the consttable
 const const_value = 10;
+
+// this shows up in no table
+local local_value = 10;
+
+// this shows up in the roottable
+global_value <- 10;
 
 function dump_table(tbl)
 {
@@ -45,7 +52,7 @@ function dump_table(tbl)
 
 function main()
 {
-::print("# Squirrel Scripting Environment\n");
+::printf("# Squirrel Scripting Environment (%s)\n", _version_);
 
 ::print("## Root Table\n");
 dump_table(getroottable())
