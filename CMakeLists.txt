@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.21)
 
 # Source of truth: top-level VERSION file (e.g. "0.1.0-dev"), or
 # -DPROJECT_VERSION_FULL=... from the packaging (Nix flake appends
