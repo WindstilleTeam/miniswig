@@ -31,6 +31,7 @@ project(miniswig)
 message(STATUS "miniswig version: ${PROJECT_VERSION_FULL}")
 
 option(BUILD_TESTS "Build test cases" OFF)
+option(MINISWIG_INSTALL "Generate install rules, off by default when miniswig is a subdirectory" ${PROJECT_IS_TOP_LEVEL})
 
 if(BUILD_TESTS)
   # add 'make test' target, use 'make test ARGS="-V"' or 'ctest -V' for verbose
@@ -72,7 +73,9 @@ target_link_libraries(miniswig miniswig_generated)
 target_include_directories(miniswig PUBLIC src/)
 target_compile_definitions(miniswig PRIVATE MINISWIG_VERSION="${PROJECT_VERSION_FULL}")
 
-install(TARGETS miniswig)
+if(MINISWIG_INSTALL)
+  install(TARGETS miniswig)
+endif()
 
 if(BUILD_TESTS)
   find_package(squirrel 3.2 REQUIRED)
